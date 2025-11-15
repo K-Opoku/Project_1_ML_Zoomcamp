@@ -5,9 +5,10 @@ import numpy as np
 import pandas as pd
 import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import make_pipeline
-from sklearn.feature_extraction import DictVectorizer
 from xgboost import XGBClassifier
+from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
 
 
 
@@ -33,17 +34,14 @@ def clean_data():
 
 
 
-    # Applied log transform to mitigate outliers
-    outlier_col=['amount', 'oldbalanceorg', 'newbalanceorig', 'oldbalancedest', 'newbalancedest']
-    for i in outlier_col:
-        df[i]=np.log1p(df[i])
-
+   
 
     return df
 
 
 categorical=['type']
 numerical=['step','amount','oldbalanceorg','newbalanceorig','oldbalancedest','newbalancedest']
+outlier_col=['amount', 'oldbalanceorg', 'newbalanceorig', 'oldbalancedest', 'newbalancedest']
 
 
 
@@ -58,17 +56,26 @@ def train_model(df):
     del df_fulltrain['isfraud']
 
 
-    fulltrain_dict= df_fulltrain[categorical+numerical].to_dict(orient='records')
-    pipeline=make_pipeline(DictVectorizer(),XGBClassifier(n_estimators=90,random_state=42,max_depth=5,min_child_weight=1,gamma=0,scale_pos_weight=10,colsample_bytree=0.7,eta=0.1))
-    pipeline.fit(fulltrain_dict,y_fulltrain)
-    return pipeline
+   
+    
+
+    passthrough_feature = ['step']
+
+    log_transformer= Pipeline(steps=[('log1p',FunctionTransformer(np.log1p,validate=False) )])
+    categorical_transformer=Pipeline(steps=[('onehotencode',OneHotEncoder(handle_unknown='ignore'))])
+    preprocessor=ColumnTransformer(transformers=[('log_transform',log_transformer,outlier_col),('categorical_transform',categorical_transformer,categorical),('passthrough_trans','passthrough',passthrough_feature)])
+    final_pipeline=Pipeline(steps=[('preprocessor',preprocessor),('xgb_model',XGBClassifier(n_estimators=90,random_state=42,max_depth=5,min_child_weight=1,gamma=0,scale_pos_weight=10,colsample_bytree=0.7,eta=0.1))])
+
+
+    final_pipeline.fit(df_fulltrain,y_fulltrain)
+    return  final_pipeline
 
 
 
 
 
-def save_model(pipeline,filename='final_model_pipeline.pkl'):
-    joblib.dump(pipeline, filename)
+def save_model(final_pipeline,filename='final_model_pipeline.pkl'):
+    joblib.dump(final_pipeline, filename)
     print(f'Model saved to {filename}')
 
 

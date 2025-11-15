@@ -3,6 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel,Field
 from typing import Literal
+import pandas as pd
 
 
 
@@ -11,7 +12,8 @@ pipeline=joblib.load('final_model_pipeline.pkl')
 app=FastAPI(title='Fraud Detection Service')
 
 def predict_single(transaction):
-    result=pipeline.predict_proba(transaction)[0,1]
+    df = pd.DataFrame([transaction])
+    result=pipeline.predict_proba(df)[0,1]
     return result
 
 class Transaction(BaseModel):
@@ -30,7 +32,7 @@ class PredictionResponse(BaseModel):
 @app.post('/predict')
 def predict(transaction:Transaction)->PredictionResponse:
     transaction_dict=[transaction.dict()]
-    fraud_probability=predict_single(transaction_dict)
+    fraud_probability=predict_single(transaction.model_dump())
     fraud= fraud_probability>=0.038
     return PredictionResponse(fraud_probability=fraud_probability,fraud=fraud)
 
