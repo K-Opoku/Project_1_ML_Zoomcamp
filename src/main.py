@@ -4,10 +4,16 @@ from fastapi import FastAPI
 from pydantic import BaseModel,Field
 from typing import Literal
 import pandas as pd
+import os
 
 
 
-pipeline=joblib.load('final_model_pipeline.pkl')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, 'final_model_pipeline.pkl')
+
+# Load the model using the full path
+pipeline = joblib.load(MODEL_PATH)
 
 app=FastAPI(title='Fraud Detection Service')
 
