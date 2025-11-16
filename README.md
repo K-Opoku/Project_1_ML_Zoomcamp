@@ -75,11 +75,14 @@ This service is fully containerized with Docker.
 * `git` installed.
 
 ### Step 1: Clone the Repository
-
+Open the terminal and run:
 ```bash
-git clone [https://github.com/K-Opoku/Project_1_ML_Zoomcamp.git](https://github.com/K-Opoku/Project_1_ML_Zoomcamp.git)
-cd Project_1_ML_Zoomcamp
+git clone https://github.com/K-Opoku/fraud-detection-service.git
+
+cd fraud-detection-service
 ```
+Or visit the repo:
+[https://github.com/K-Opoku/fraud-detection-service.git](https://github.com/K-Opoku/fraud-detection-service.git)
 
 ### Step 2: Build the Docker Image
 
@@ -136,6 +139,11 @@ curl -X POST "http://localhost:8000/predict" \
            "newbalancedest": 0.0
          }'
 ```
+#### You can also send a request using the test_api .py in the test folder
+(you can run it in the terminal like this)
+```bash
+python tests/test_api.py
+```
 
 #### Example Success Response
 The API returns the probability and the final boolean decision (based on the `0.038` threshold).
@@ -154,4 +162,4 @@ The API returns the probability and the final boolean decision (based on the `0.
 * **CI/CD Pipeline:** Implement GitHub Actions to automatically test and build the Docker image on every push to `main` and publish it to Docker Hub or GHCR.
 * **Cloud Deployment:** Deploy the service to a scalable cloud platform like **AWS Elastic Beanstalk**, **GCP Cloud Run**, or a **Kubernetes** cluster.
 * **Model Monitoring:** Integrate tools like **Evidently AI** or **Prometheus** to monitor the API for latency, traffic, and model drift over time.
-* **Unit & Integration Testing:** Expand `test.py` into a full `pytest` suite to test API endpoints, data validation, and model edge cases.
+* **Unit & Integration Testing:** Expand `test_api.py` into a full `pytest` suite to test API endpoints, data validation, and model edge cases.
