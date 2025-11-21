@@ -12,9 +12,9 @@ The final artifact is a **Docker image** that runs a **FastAPI** application, wh
 
 ## 1. 🎯 Business Goal & Project Objective
 
-The most critical part of this project was defining a clear business objective.
+The most critical part of this project was defining a clear business objective. I assume a situation or a bussiness world where missing a fraud case is very expensive. Therefore my goal is to prioritise catching frauds to reduce cost as I also ensure minimising the flag of legitimate transaction.
 
-**Problem:** Financial fraud is highly imbalanced. Missing a single fraudulent transaction (a **False Negative**) is often far more costly than flagging a legitimate transaction for review (a **False Positive**).
+**Problem:** Financial fraud is highly imbalanced. Missing a single fraudulent transaction (a **False Negative**) is often far more costly than flagging a legitimate transaction for review (a **False Positive**). 
 
 **Project Objective:** Prioritize **High Recall** to minimize missed fraud, while maintaining acceptable precision.
 
@@ -154,6 +154,12 @@ The API returns the probability and the final boolean decision (based on the `0.
   "fraud": false
 }
 ```
+### Bussiness Goal:
+This is what a bussiness can do after the service predicts a transaction being fraud or not.
+| Prediction (`is_fraud`) | Fraud Probability | Suggested Business Action                            |
+| ----------------------- | ----------------- | ---------------------------------------------------- |
+| True                    | > 0.038           | Flag transaction, hold payment, notify security team |
+| False                   | ≤ 0.038           | Process normally, no action needed                   |
 
 ---
 
